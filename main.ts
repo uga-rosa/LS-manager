@@ -20,6 +20,10 @@ const known_servers: { [lang: string]: server } = {
     name: "bash-language-server",
     mode: "npm",
   },
+  go: {
+    name: "gopls",
+    mode: "go",
+  },
 };
 
 const ASSETS: { [language: string]: asset } = {
@@ -77,6 +81,12 @@ const release = {
   },
 };
 
+const go = {
+  async install() {
+    await $`go install golang.org/x/tools/gopls@latest`;
+  },
+};
+
 const url_maker = (language: string): string | undefined => {
   const asset = ASSETS[language.toUpperCase()];
   if (!asset) return;
@@ -117,6 +127,12 @@ const builder = (
       return {
         install,
         update: install,
+      };
+    }
+    case "go": {
+      return {
+        install: go.install,
+        update: go.install,
       };
     }
   }
