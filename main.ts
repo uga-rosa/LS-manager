@@ -1,6 +1,7 @@
 #!/usr/bin/env -S deno run -A
 
 import { $ } from "https://deno.land/x/dax@0.23.0/mod.ts";
+import { join } from "https://deno.land/std@0.171.0/path/mod.ts";
 
 const ASSETS: { [language: string]: asset } = {
   LUA: {
@@ -12,12 +13,14 @@ const ASSETS: { [language: string]: asset } = {
   },
 };
 
+const dirname = new URL(".", import.meta.url).pathname;
+
 const known_servers: { [lang: string]: server } = {
   lua: {
     name: "lua-language-server",
     mode: "release",
-    src: "../lua/bin/lua-language-server",
-    target: "bin/lua-language-server",
+    src: join(dirname, "lua/bin/lua-language-server"),
+    target: "$HOME/.local/bin/lua-language-server",
   },
   vim: {
     name: "vim-language-server",
@@ -51,12 +54,14 @@ interface installer {
 
 const npm = {
   async install(name: string) {
-    await $.raw`npm install -D ${name}`;
-    await $.raw`ln -fsn "../node_modules/.bin/${name}" "bin/${name}"`;
+    await $`npm install -D ${name}`;
+    const src = join(dirname, "node_modules/.bin", name);
+    const target = join("$HOME/.local/bin", name);
+    await $.raw`ln -fsn ${src} ${target}`;
   },
 
   async update(name: string) {
-    await $.raw`npm update -D ${name}`;
+    await $`npm update -D ${name}`;
   },
 };
 
@@ -68,7 +73,7 @@ const release = {
     await Deno.mkdir(language, { recursive: true });
     await $`tar xf ${tempFilePath} -C ${language}`;
     await $`rm ${tempFilePath}`;
-    await $`ln -fsn ${src} ${target}`;
+    await $.raw`ln -fsn ${src} ${target}`;
   },
 };
 
@@ -117,7 +122,7 @@ const builder = (
   }
 };
 
-const main = async () => {
+const main = () => {
   if (Deno.args.length === 0) {
     console.log("No argument");
     Deno.exit(1);
@@ -140,12 +145,11 @@ const main = async () => {
     Deno.exit(1);
   }
 
-  await Deno.mkdir("bin", { recursive: true });
   Promise.all(installers.map((installer) => {
     if (mode === "install") {
-      return installer.install();
+      installer.install();
     } else if (mode === "update") {
-      return installer.update();
+      installer.update();
     }
   }));
 };
