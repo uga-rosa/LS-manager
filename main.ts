@@ -24,6 +24,14 @@ const known_servers: { [lang: string]: server } = {
     name: "gopls",
     mode: "go",
   },
+  python: {
+    name: "pyright",
+    mode: "npm",
+  },
+  css: {
+    name: "vscode-langservers-extracted",
+    mode: "npm",
+  },
 };
 
 const ASSETS: { [language: string]: asset } = {
