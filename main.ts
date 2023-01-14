@@ -147,34 +147,32 @@ const builder = (
 };
 
 const main = () => {
-  if (Deno.args.length === 0) {
-    console.log("No argument");
+  if (Deno.args.length < 2) {
+    console.log("Missing arguments");
     Deno.exit(1);
   }
   const mode = Deno.args[0];
-  const installers = Deno.args.slice(1)
-    .flatMap((lang) => {
-      if (lang === "all") {
-        return Object.entries(known_servers)
-          .flatMap(([lang, server]) => builder(lang, server) || []);
-      }
-      const server = known_servers[lang];
-      if (!server) return [];
-      const installer = builder(lang, server);
-      if (!installer) return [];
-      return installer;
-    });
+  if (mode !== "install" && mode !== "update") {
+    return;
+  }
+  const installers = Deno.args[1] === "all"
+    ? Object.entries(known_servers)
+      .flatMap(([lang, server]) => builder(lang, server) || [])
+    : Deno.args.slice(1)
+      .flatMap((lang) => {
+        const server = known_servers[lang];
+        if (!server) return [];
+        const installer = builder(lang, server);
+        if (!installer) return [];
+        return installer;
+      });
   if (installers.length === 0) {
     console.log("No valid language");
     Deno.exit(1);
   }
 
   Promise.all(installers.map((installer) => {
-    if (mode === "install") {
-      installer.install();
-    } else if (mode === "update") {
-      installer.update();
-    }
+    installer[mode]();
   }));
 };
 
