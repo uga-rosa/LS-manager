@@ -3,16 +3,6 @@
 import { $ } from "https://deno.land/x/dax@0.23.0/mod.ts";
 import { join } from "https://deno.land/std@0.171.0/path/mod.ts";
 
-const ASSETS: { [language: string]: asset } = {
-  LUA: {
-    OWNER: "sumneko",
-    NAME: "lua-language-server",
-    TAG: "3.6.4",
-    OS: "linux-x64",
-    FILENAME: "{{NAME}}-{{TAG}}-{{OS}}.tar.gz",
-  },
-};
-
 const dirname = new URL(".", import.meta.url).pathname;
 
 const known_servers: { [lang: string]: server } = {
@@ -32,19 +22,29 @@ const known_servers: { [lang: string]: server } = {
   },
 };
 
-interface asset {
-  OWNER: string;
-  NAME: string;
-  TAG: string;
-  OS: string;
-  FILENAME: string;
-}
+const ASSETS: { [language: string]: asset } = {
+  LUA: {
+    OWNER: "sumneko",
+    NAME: "lua-language-server",
+    TAG: "3.6.4",
+    OS: "linux-x64",
+    FILENAME: "{{NAME}}-{{TAG}}-{{OS}}.tar.gz",
+  },
+};
 
 interface server {
   name: string;
   mode: string;
   src?: string;
   target?: string;
+}
+
+interface asset {
+  OWNER: string;
+  NAME: string;
+  TAG: string;
+  OS: string;
+  FILENAME: string;
 }
 
 interface installer {
