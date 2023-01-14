@@ -1,0 +1,6 @@
+{
+  "devDependencies": {
+    "bash-language-server": "^4.4.0",
+    "vim-language-server": "^2.3.0"
+  }
+}
