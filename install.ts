@@ -12,12 +12,41 @@ const ASSETS: { [language: string]: asset } = {
   },
 };
 
+const known_servers: { [lang: string]: server } = {
+  lua: {
+    name: "lua-language-server",
+    mode: "release",
+    src: "../lua/bin/lua-language-server",
+    target: "bin/lua-language-server",
+  },
+  vim: {
+    name: "vim-language-server",
+    mode: "npm",
+  },
+  bash: {
+    name: "bash-language-server",
+    mode: "npm",
+  },
+};
+
 interface asset {
   OWNER: string;
   NAME: string;
   TAG: string;
   OS: string;
   FILENAME: string;
+}
+
+interface server {
+  name: string;
+  mode: string;
+  src?: string;
+  target?: string;
+}
+
+interface installer {
+  install: () => Promise<void>;
+  update: () => Promise<void>;
 }
 
 const npm = {
@@ -55,11 +84,6 @@ const url_maker = (language: string): string | undefined => {
   return url;
 };
 
-interface installer {
-  install: () => Promise<void>;
-  update: () => Promise<void>;
-}
-
 const builder = (
   language: string,
   server: server,
@@ -91,30 +115,6 @@ const builder = (
       };
     }
   }
-};
-
-interface server {
-  name: string;
-  mode: string;
-  src?: string;
-  target?: string;
-}
-
-const known_servers: { [lang: string]: server } = {
-  lua: {
-    name: "lua-language-server",
-    mode: "release",
-    src: "../lua/bin/lua-language-server",
-    target: "bin/lua-language-server",
-  },
-  vim: {
-    name: "vim-language-server",
-    mode: "npm",
-  },
-  bash: {
-    name: "bash-language-server",
-    mode: "npm",
-  },
 };
 
 const main = async () => {
