@@ -71,11 +71,22 @@ interface installer {
   update: () => Promise<void>;
 }
 
+const exists = async (filepath: string): Promise<boolean> => {
+  try {
+    await Deno.stat(filepath);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
 const npm = {
   async install(name: string, bin?: string) {
     const src = join(dirname, "node_modules/.bin", bin || name);
     const target = join("$HOME/.local/bin", bin || name);
-    const target = join("$HOME/.local/bin", name);
+    if (!await exists(src)) {
+      await $`npm install -D ${name}`;
+    }
     await $.raw`ln -fsn ${src} ${target}`;
   },
 
@@ -85,13 +96,21 @@ const npm = {
 };
 
 const release = {
-  async install(language: string, url: string, src: string, target: string) {
-    const tempFilePath = await Deno.makeTempFile();
-    await $`rm ${tempFilePath}`;
-    await $`wget ${url} -O ${tempFilePath}`;
-    await Deno.mkdir(language, { recursive: true });
-    await $`tar xf ${tempFilePath} -C ${language}`;
-    await $`rm ${tempFilePath}`;
+  async install(
+    language: string,
+    url: string,
+    src: string,
+    target: string,
+    force = false,
+  ) {
+    if (force || !await exists(src)) {
+      const tempFilePath = await Deno.makeTempFile();
+      await $`rm ${tempFilePath}`;
+      await $`wget ${url} -O ${tempFilePath}`;
+      await Deno.mkdir(language, { recursive: true });
+      await $`tar xf ${tempFilePath} -C ${language}`;
+      await $`rm ${tempFilePath}`;
+    }
     await $.raw`ln -fsn ${src} ${target}`;
   },
 };
@@ -137,12 +156,13 @@ const builder = (
       if (!src || !target) return;
       const url = url_maker(language);
       if (!url) return;
-      const install = async () => {
-        await release.install(language, url, src, target);
-      };
       return {
-        install,
-        update: install,
+        async install() {
+          await release.install(language, url, src, target);
+        },
+        async update() {
+          await release.install(language, url, src, target, true);
+        },
       };
     }
     case "go": {
