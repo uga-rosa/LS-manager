@@ -31,6 +31,12 @@ const known_servers: { [lang: string]: server } = {
   css: {
     name: "vscode-langservers-extracted",
     mode: "npm",
+    bin: "vscode-css-language-server",
+  },
+  json: {
+    name: "vscode-langservers-extracted",
+    mode: "npm",
+    bin: "vscode-json-language-server",
   },
 };
 
@@ -49,6 +55,7 @@ interface server {
   mode: string;
   src?: string;
   target?: string;
+  bin?: string;
 }
 
 interface asset {
@@ -65,9 +72,9 @@ interface installer {
 }
 
 const npm = {
-  async install(name: string) {
-    await $`npm install -D ${name}`;
-    const src = join(dirname, "node_modules/.bin", name);
+  async install(name: string, bin?: string) {
+    const src = join(dirname, "node_modules/.bin", bin || name);
+    const target = join("$HOME/.local/bin", bin || name);
     const target = join("$HOME/.local/bin", name);
     await $.raw`ln -fsn ${src} ${target}`;
   },
@@ -115,11 +122,12 @@ const builder = (
   const mode = server.mode;
   const src = server.src;
   const target = server.target;
+  const bin = server.bin;
   switch (mode) {
     case "npm":
       return {
         async install() {
-          await npm.install(name);
+          await npm.install(name, bin);
         },
         async update() {
           await npm.update(name);
