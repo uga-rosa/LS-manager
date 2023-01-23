@@ -1,16 +1,8 @@
-# Installation
-
-Clone this repository and run make.
-
-```sh
-make
-```
-
 # Usage
 
 ```sh
-ls-manager.ts install lua vim
-ls-manager.ts update bash
+./main.ts install all
+./main.ts update bash
 ```
 
 # Supported Language Servers
