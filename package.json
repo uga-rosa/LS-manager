@@ -1,6 +1,6 @@
 {
   "devDependencies": {
-    "bash-language-server": "^4.4.0",
+    "bash-language-server": "^4.5.1",
     "pyright": "^1.1.289",
     "vim-language-server": "^2.3.0",
     "vscode-langservers-extracted": "^4.5.0"
