@@ -28,6 +28,10 @@ const known_servers: { [lang: string]: server } = {
     name: "pyright",
     mode: "npm",
   },
+  typescript: {
+    name: "typescript-language-server",
+    mode: "npm",
+  },
   css: {
     name: "vscode-langservers-extracted",
     mode: "npm",
