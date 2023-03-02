@@ -48,7 +48,7 @@ const ASSETS: { [language: string]: asset } = {
   LUA: {
     OWNER: "sumneko",
     NAME: "lua-language-server",
-    TAG: "3.6.4",
+    TAG: "3.6.13",
     OS: "linux-x64",
     FILENAME: "{{NAME}}-{{TAG}}-{{OS}}.tar.gz",
   },
