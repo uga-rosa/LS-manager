@@ -175,7 +175,7 @@ function builder(language: string, server: server): installer | undefined {
   }
 }
 
-const main = () => {
+async function main() {
   if (Deno.args.length < 2) {
     console.log("Missing arguments");
     Deno.exit(1);
@@ -200,9 +200,9 @@ const main = () => {
     Deno.exit(1);
   }
 
-  Promise.all(installers.map((installer) => {
-    installer[mode]();
-  }));
-};
+  for (const installer of installers) {
+    await installer[mode]();
+  }
+}
 
-main();
+await main();
