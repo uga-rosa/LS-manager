@@ -3,7 +3,7 @@
 import { $ } from "https://deno.land/x/dax@0.23.0/mod.ts";
 import { join } from "https://deno.land/std@0.171.0/path/mod.ts";
 
-const dirname = new URL(".", import.meta.url).pathname
+const dirname = new URL(".", import.meta.url).pathname;
 
 const known_servers: { [lang: string]: server } = {
   lua: {
