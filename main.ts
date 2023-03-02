@@ -125,7 +125,7 @@ const go = {
   },
 };
 
-const url_maker = (language: string): string | undefined => {
+function url_maker(language: string): string | undefined {
   const asset = ASSETS[language.toUpperCase()];
   if (!asset) return;
   const filename = asset.FILENAME
@@ -135,12 +135,9 @@ const url_maker = (language: string): string | undefined => {
   const url =
     `https://github.com/${asset.OWNER}/${asset.NAME}/releases/download/${asset.TAG}/${filename}`;
   return url;
-};
+}
 
-const builder = (
-  language: string,
-  server: server,
-): installer | undefined => {
+function builder(language: string, server: server): installer | undefined {
   const name = server.name;
   const mode = server.mode;
   const src = server.src;
@@ -176,7 +173,7 @@ const builder = (
       };
     }
   }
-};
+}
 
 const main = () => {
   if (Deno.args.length < 2) {
